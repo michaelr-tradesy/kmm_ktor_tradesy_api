@@ -2,19 +2,14 @@ package com.example.ktortutorial101
 
 import com.example.ktortutorial101.model.HomePageResponse
 import io.ktor.client.HttpClient
-//import io.ktor.client.features.*
-//import io.ktor.client.features.json.JsonFeature
-//import io.ktor.client.features.json.serializer.KotlinxSerializer
+import io.ktor.client.call.*
 import io.ktor.client.plugins.*
+import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.util.*
-import io.ktor.utils.io.*
-import io.ktor.utils.io.charsets.*
-import io.ktor.utils.io.core.*
+import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
-
 
 
 class ApiClient {
@@ -41,19 +36,8 @@ class ApiClient {
     -H 'X-tradesy-user-token: 7359491db133b93152a2e93846827a1e28a38780fe9c0ce34374b3d13804ae0b' \
     -H 'X-tradesy-userId: 9821358'
      */
-    suspend fun tradesyHomePage(): HttpResponse {
-        val client = HttpClient() {
-//            install(JsonFeature) {
-//                val json = Json{ ignoreUnknownKeys = true; encodeDefaults = true; isLenient = true }
-//                serializer = KotlinxSerializer(json)
-//            },
-//            install(ContentNegotiation) {
-//                register(ContentType.Application.Json, KotlinxSerializer())
-//            },
-//            install(JsonFeature) {
-//                val json = Json { ignoreUnknownKeys = true }
-//                serializer = KotlinxSerializer(json)
-//            },
+    suspend fun tradesyHomePage(): HomePageResponse {
+        val client = HttpClient {
             HttpResponseValidator {
                 handleResponseException { exception ->
                     val clientException = exception as? ClientRequestException ?: return@handleResponseException
@@ -64,8 +48,23 @@ class ApiClient {
                     }
                 }
             }
+            install(Logging) {
+                logger = Logger.DEFAULT
+                level = LogLevel.ALL
+            }
+            install(ContentNegotiation) {
+                json(json = Json {
+                    encodeDefaults = true
+                    isLenient = true
+                    allowSpecialFloatingPointValues = true
+                    allowStructuredMapKeys = true
+                    prettyPrint = true
+                    useArrayPolymorphism = false
+                    ignoreUnknownKeys = true
+                })
+            }
         }
-        val response = client.post("https://api.tradesy.com/2.0.0/homepage") {
+        val response: HomePageResponse = client.post("https://api.tradesy.com/2.0.0/homepage") {
             headers {
                 append(HttpHeaders.Host, "api.tradesy.com")
                 append(HttpHeaders.AcceptEncoding, "application/json")
@@ -79,7 +78,7 @@ class ApiClient {
                 append("X-tradesy-user-token", "7359491db133b93152a2e93846827a1e28a38780fe9c0ce34374b3d13804ae0b")
                 append("X-tradesy-userId", "9821358")
             }
-        }
+        }.body()
         println(response)
         client.close()
         return response

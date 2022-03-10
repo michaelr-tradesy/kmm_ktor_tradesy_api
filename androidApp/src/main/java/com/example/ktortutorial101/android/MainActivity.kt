@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         tv.text = greet()
 
         MainScope().launch {
-            println("response=[${ApiClient().tradesyHomePage().bodyAsText()}]")
+            println("response=[${ApiClient().tradesyHomePage()}]")
         }
     }
 }
