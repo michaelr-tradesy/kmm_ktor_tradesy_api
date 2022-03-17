@@ -1,10 +1,9 @@
 plugins {
     id("com.android.application")
     kotlin("android")
-    id("kotlin-android-extensions")
 }
 
-val compose_version = "1.0.5"
+val compose_version = "1.1.1"
 val ktor_version = "2.0.0-beta-1"
 
 android {

@@ -1,8 +1,7 @@
 val coroutinesVersion = "1.3.9-native-mt"
 val serializationVersion = "1.3.2"
 val ktor_version = "2.0.0-beta-1"
-val kotlinVersion = "1.5.31" //"1.6.10"
-//val kotlinVersion = "1.6.10"
+val kotlinVersion = "1.6.10"
 
 plugins {
     kotlin("multiplatform")
