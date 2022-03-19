@@ -300,7 +300,7 @@ class MainActivity : DefaultAppActivity() {
 
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data(value.imageMobile)
+                            .data(value.image)
                             .crossfade(true)
                             .build(),
                         placeholder = painterResource(R.drawable.ic_baseline_image_24),
